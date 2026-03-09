@@ -100,9 +100,9 @@ def r2rpy(R,unit='rad'):
     Returns:
         np.array: Array of [roll, pitch, yaw] angles.
     """
-    roll  = np.math.atan2(R[2, 1], R[2, 2])
-    pitch = np.math.atan2(-R[2, 0], (np.sqrt(R[2, 1] ** 2 + R[2, 2] ** 2)))
-    yaw   = np.math.atan2(R[1, 0], R[0, 0])
+    roll  = np.arctan2(R[2, 1], R[2, 2])
+    pitch = np.arctan2(-R[2, 0], (np.sqrt(R[2, 1] ** 2 + R[2, 2] ** 2)))
+    yaw   = np.arctan2(R[1, 0], R[0, 0])
     if unit == 'rad':
         out = np.array([roll, pitch, yaw])
     elif unit == 'deg':

@@ -1,6 +1,13 @@
 import numpy as np
 import cvxpy as cp
-from ik import solve_ik
+import sys
+from pathlib import Path
+
+_THIS_DIR = Path(__file__).resolve().parent
+_UTILITY_DIR = _THIS_DIR.parent / "utility"
+if str(_UTILITY_DIR) not in sys.path:
+    sys.path.append(str(_UTILITY_DIR))
+
 from utils import get_idxs
 
 def d2r(deg):
@@ -84,6 +91,7 @@ def solve_ik_and_interpolate(
     q_start = env.get_qpos_joints(joint_names=joint_names_for_ik)
 
     # Solve IK
+    from ik import solve_ik
     q_final,ik_err_stack,ik_info = solve_ik(
         env=env,joint_names_for_ik=joint_names_for_ik,
         body_name_trgt = body_name_trgt,

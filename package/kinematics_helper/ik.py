@@ -1,13 +1,13 @@
 import sys
 import numpy as np
+from pathlib import Path
 
-"""
-sys.path.append('../../package/utility/') # for 'utils.py'
-"""
-from utils import (
-    get_colors,
-    get_idxs,
-)
+_THIS_DIR = Path(__file__).resolve().parent
+_UTILITY_DIR = _THIS_DIR.parent / "utility"
+if str(_UTILITY_DIR) not in sys.path:
+    sys.path.append(str(_UTILITY_DIR))
+
+from utils import get_colors, get_idxs
 
 # Inverse kinematics helper
 def init_ik_info():
