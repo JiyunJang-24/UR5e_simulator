@@ -115,13 +115,6 @@ def run_sim_with_q(
                         movel_acc,
                         True,
                     )
-                # target_q = result["qpos"]
-                # ok = rtde_c.moveJ(
-                #     target_q.tolist(),
-                #     movel_speed,
-                #     movel_acc,
-                #     True,
-                # )
 
             env.plot_sphere(p=p_trgt, r=0.012, rgba=[1.0, 0.2, 0.2, 0.8])
             env.plot_T(
