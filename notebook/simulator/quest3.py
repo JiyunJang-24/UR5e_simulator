@@ -313,7 +313,7 @@ class Quest3InterventionUR5(gym.Wrapper):
         if fake_env:
             print("Using fake VR Policy")
             return
-        self.expert = VRPolicy(only_pos_control=self.only_pos_control, pos_action_gain=0.0002, rot_action_gain=0.06)
+        self.expert = VRPolicy(only_pos_control=self.only_pos_control, pos_action_gain=0.06, rot_action_gain=0.06)
         self.last_intervene = 0 
         self.gripper_state = 0
 

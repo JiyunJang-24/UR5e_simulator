@@ -20,7 +20,7 @@ from transforms import rpy2r  # noqa: E402
 from ur5e_ik_env import UR5eIKEnv  # noqa: E402
 from ur_env.envs.camera_env.config import UR5CameraConfigFinal  # noqa: E402
 from robot_controllers.ur5_controller_thread import UrImpedanceController_Thread  # noqa: E402
-
+from scipy.spatial.transform import Rotation as R
 
 class RuntimeConfig(UR5CameraConfigFinal):
     pass
@@ -106,8 +106,19 @@ class UR5RealControllerRunner:
 
     def move_by_delta(self, delta_pose: np.ndarray, wait: bool = False, timeout: float = 5.0):
         self._update_state_from_controller()
-        target = self.curr_pos_euler.copy()
-        target += np.asarray(delta_pose, dtype=np.float64).reshape(6)
+        p_curr = self.curr_pos_euler[:3]
+        R_curr = rpy2r(self.curr_pos_euler[3:])
+        dp = delta_pose[:3]
+        drpy = delta_pose[3:]
+
+        p_trgt = p_curr + dp
+
+        R_trgt_mat = rpy2r(drpy) @ R_curr
+
+        euler_trgt = R.from_matrix(R_trgt_mat).as_euler("xyz")
+
+        target = np.concatenate([p_trgt, euler_trgt])
+
         return self.move_to_pose(target, wait=wait, timeout=timeout)
 
     def set_gripper(self, closed: bool):
