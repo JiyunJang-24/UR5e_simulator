@@ -300,7 +300,7 @@ class VRPolicy:
 
 
 class Quest3InterventionUR5(gym.Wrapper):
-    def __init__(self, env, fake_env=False):
+    def __init__(self, env, fake_env=False, pos_action_gain=0.01, rot_action_gain=0.06):
         self.env = env
         self.gripper_enabled = True
         
@@ -315,7 +315,7 @@ class Quest3InterventionUR5(gym.Wrapper):
         if fake_env:
             print("Using fake VR Policy")
             return
-        self.expert = VRPolicy(only_pos_control=self.only_pos_control, pos_action_gain=0.06, rot_action_gain=0.06)
+        self.expert = VRPolicy(only_pos_control=self.only_pos_control, pos_action_gain=pos_action_gain, rot_action_gain=rot_action_gain)
         self.last_intervene = 0 
         self.gripper_state = 0 # open: 0, close: 1
 

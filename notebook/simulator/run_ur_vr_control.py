@@ -25,7 +25,7 @@ class VRRealURControlEnv:
             frequency_hz=controller_hz,
             mirror_sim=False,
         )
-        self.vr = Quest3InterventionUR5(env=None)
+        self.vr = Quest3InterventionUR5(env=None, fake_env=use_sim, pos_action_gain=0.09, rot_action_gain=0.02)
 
         q0 = self.runner.reset()
         self.robot = None
@@ -98,10 +98,13 @@ class VRRealURControlEnv:
             )
             gripper_target = self.runner.set_gripper(vr_action[6])
         else:
-            self.runner.reset()
-            target = self.runner.curr_pos_euler.copy()
+            target = self.runner.move_by_delta(
+                np.zeros_like(pose_action),
+                wait=self.wait,
+                timeout=5.0,
+            )
 
-        self._sync_sim_from_real(action=pose_action, replaced=replaced)
+        # self._sync_sim_from_real(action=pose_action, replaced=replaced)
         return {
             "action": pose_action.copy(),
             "target_pose": target.copy(),
@@ -115,6 +118,9 @@ class VRRealURControlEnv:
         if self.env is not None and self.env.use_mujoco_viewer and self.env.is_viewer_alive():
             self.env.close_viewer()
 
+    def reset(self):
+        self.runner.reset()
+        # self._sync_sim_from_real()
 
 def build_argparser():
     parser = argparse.ArgumentParser(description="Use Quest3 VR actions to drive the real UR controller.")
@@ -137,6 +143,7 @@ def main():
     )
 
     try:
+        env.reset()
         while True:
             result = env.action()
             print(

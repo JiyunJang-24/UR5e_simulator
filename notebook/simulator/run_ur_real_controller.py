@@ -109,12 +109,13 @@ class UR5RealControllerRunner:
         p_curr = self.curr_pos_euler[:3]
         R_curr = rpy2r(self.curr_pos_euler[3:])
         dp = delta_pose[:3]
+        dp *= np.array([-1, -1, 1], dtype=np.float64)
         drpy = delta_pose[3:]
-
+        drpy[2] = -drpy[2]
         p_trgt = p_curr + dp
-
-        R_trgt_mat = rpy2r(drpy) @ R_curr
-
+        R_delta = rpy2r(drpy)
+        R_trgt_mat = R_delta.T @ R_curr
+                   
         euler_trgt = R.from_matrix(R_trgt_mat).as_euler("xyz")
 
         target = np.concatenate([p_trgt, euler_trgt])
