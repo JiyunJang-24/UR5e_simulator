@@ -90,13 +90,13 @@ class VRRealURControlEnv:
         vr_action, replaced = self.vr.action(obs=obs)
         vr_action = np.asarray(vr_action, dtype=np.float64).reshape(-1)
         pose_action = vr_action[:6]
-
         if replaced:
             target = self.runner.move_by_delta(
                 pose_action,
                 wait=self.wait,
                 timeout=5.0,
             )
+            gripper_target = self.runner.set_gripper(vr_action[6])
         else:
             self.runner.reset()
             target = self.runner.curr_pos_euler.copy()

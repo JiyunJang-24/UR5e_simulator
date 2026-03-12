@@ -121,8 +121,8 @@ class UR5RealControllerRunner:
 
         return self.move_to_pose(target, wait=wait, timeout=timeout)
 
-    def set_gripper(self, closed: bool):
-        self.controller.set_gripper_pos(1.0 if closed else -1.0)
+    def set_gripper(self, gripper_action: float):
+        self.controller.set_gripper_pos(gripper_action)
 
     def run_x_axis_scenario(self, step_size: float = 0.02, dwell: float = 2.0, wait: bool = True):
         self.reset()

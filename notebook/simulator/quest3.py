@@ -167,6 +167,7 @@ class VRPolicy:
             # Read Controller
             time_since_read = time.time() - last_read_time
             poses, buttons = self.oculus_reader.get_transformations_and_buttons()
+            # print("Read VR State: ", buttons)
             self._state["controller_on"] = time_since_read < num_wait_sec
             if poses == {}:
                 continue
@@ -252,7 +253,8 @@ class VRPolicy:
         euler_action = quat_to_euler(quat_action)
 
         # Calculate Gripper Action #
-        gripper_action = (self.vr_state["gripper"] * 1.5) - robot_gripper
+        # gripper_action = (self.vr_state["gripper"] * 1.5) - robot_gripper
+        gripper_action = self.vr_state["gripper"]
 
         # Calculate Desired Pose #
         target_pos = pos_action + robot_pos
@@ -315,7 +317,7 @@ class Quest3InterventionUR5(gym.Wrapper):
             return
         self.expert = VRPolicy(only_pos_control=self.only_pos_control, pos_action_gain=0.06, rot_action_gain=0.06)
         self.last_intervene = 0 
-        self.gripper_state = 0
+        self.gripper_state = 0 # open: 0, close: 1
 
     def action(self, obs) -> np.ndarray:
         """
@@ -326,23 +328,20 @@ class Quest3InterventionUR5(gym.Wrapper):
         """
         # observation in forward () TODO yj
         expert_action = self.expert.forward(obs)
-        
         self.gripper = expert_action[-1]
         
         if self.expert._state["movement_enabled"]:
             self.last_intervene = time.time()
         else:
             expert_action[:-1] = 0      
-
+        gripper_action = np.zeros((1,))
         if self.gripper_enabled:
-            if self.gripper >= 0.2:  # open gripper
-                gripper_action = np.random.uniform(0, 0.1, size=(1,))
-                self.last_intervene = time.time()
-            elif self.gripper < 0.2:  # close gripper
+            if self.gripper >= 0.9:
                 gripper_action = np.random.uniform(0.9, 1, size=(1,))
                 self.last_intervene = time.time()
-            else:
-                gripper_action = np.zeros((1,))
+            else:  # open gripper
+                gripper_action = np.random.uniform(-1.0, -0.9, size=(1,))
+                self.last_intervene = time.time()
 
             if self.only_pos_control:
                 expert_action = expert_action[:3]
@@ -358,7 +357,6 @@ class Quest3InterventionUR5(gym.Wrapper):
     def step(self, obs):
         
         new_action, replaced = self.action(obs)
-        import pdb; pdb.set_trace()
         obs, rew, done, info = self.env.step(new_action)
         
         if replaced:
