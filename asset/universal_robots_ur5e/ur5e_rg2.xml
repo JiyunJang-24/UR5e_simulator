@@ -118,7 +118,11 @@
                     <geom type="box" size="0.001 0.001 0.001" rgba="1 0 0 1" contype="0" conaffinity="0"/>
                   </body>
                   <body name="attachment" pos="0 0.1 0" quat="-1 1 0 0">
-                    <attach model="gripper_rg2" body="base_mount" prefix="rg2_"/>
+                    <!-- -90 deg about the flange axis: aligns the quick-changer dowel pin with the UR flange pin
+                         (UR pin at (0,-24.2) mm in the flange frame) -> fingers move along flange x -->
+                    <body name="gripper_frame" quat="0.70710678 0 0 -0.70710678">
+                      <attach model="gripper_rg2" body="base_mount" prefix="rg2_"/>
+                    </body>
                   </body>
                 </body>
               </body>

@@ -17,7 +17,7 @@ data.actuator("rg2_fingers").ctrl = width_to_ctrl(0.05)   # 50 mm로 열기
 ```
 
 - 손가락 패드 중심 사이트: `rg2_right_tip_pad_center`, `rg2_left_tip_pad_center`
-- `rg2_tcp` 및 `end_effector_target`: 닫혔을 때 패드 중심 위치 (플랜지에서 0.226 m). 손끝이 열린 상태에서 닫힌 상태로 가면서 툴 축 방향으로 약 5 cm 움직입니다(`rg2_utils.pad_depth(q)`).
+- `rg2_tcp` 및 `end_effector_target`: 닫혔을 때 패드 중심 위치 (플랜지에서 0.226 m, 손목 카메라 마운트를 끼우면 0.236 m). 손끝이 열린 상태에서 닫힌 상태로 가면서 툴 축 방향으로 약 5 cm 움직입니다(`rg2_utils.pad_depth(q)`).
 - 그립 힘: forcerange를 패드 한쪽당 약 40 N(RG2 최대치)이 나오도록 맞췄습니다.
 
 ## 모델링 메모
@@ -26,7 +26,7 @@ data.actuator("rg2_fingers").ctrl = width_to_ctrl(0.05)   # 50 mm로 열기
 - 충돌은 각 링크의 convex hull로 처리하고, 패드는 따로 hull을 만들어 마찰 1.0을 줬습니다. 시각용 메시는 데시메이션했고, 툴체인저 안쪽에 가려 보이지 않는 52핀 I/O 접점 블록은 뺐습니다.
 - 질량은 근사치입니다 (베이스+체인저 0.72 kg, 링크 15~35 g).
 - 최대 열림은 CAD 형상 기준으로 106 mm입니다 (공식 스펙은 110 mm).
-- 플랜지 축을 기준으로 한 그리퍼의 회전 방향(손가락이 플랜지 y축으로 움직이게 함)은 임의로 정한 값입니다. 실제 장착 방향과 다르면 `ur5e_rg2.xml`의 `attachment` body `quat`을 z축 기준으로 돌리면 됩니다.
+- 장착 방향: Quick Changer의 위치결정 핀 구멍을 UR 플랜지 핀(플랜지 좌표 (0, -24.2) mm)에 맞춰 Z축으로 -90° 돌려 달았습니다. 그래서 손가락은 플랜지 **x축**으로 움직입니다 (`ur5e_rg2.xml`의 `gripper_frame`).
 
 ## 다시 만들기
 
