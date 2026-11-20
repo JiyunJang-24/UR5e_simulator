@@ -17,7 +17,7 @@ data.actuator("rg2_fingers").ctrl = width_to_ctrl(0.05)   # 50 mm로 열기
 ```
 
 - 손가락 패드 중심 사이트: `rg2_right_tip_pad_center`, `rg2_left_tip_pad_center`
-- `rg2_tcp` 및 `end_effector_target`: 닫혔을 때 패드 중심 위치 (플랜지에서 0.226 m, 손목 카메라 마운트를 끼우면 0.236 m). 손끝이 열린 상태에서 닫힌 상태로 가면서 툴 축 방향으로 약 5 cm 움직입니다(`rg2_utils.pad_depth(q)`).
+- `rg2_tcp` 및 `end_effector_target`: 닫혔을 때 패드 중심 위치 (플랜지에서 0.2236 m: UR 플랜지가 Changer 센터링 홈에 2.5 mm 들어감. 손목 카메라 마운트를 끼우면 0.2306 m). 손끝이 열린 상태에서 닫힌 상태로 가면서 툴 축 방향으로 약 5 cm 움직입니다(`rg2_utils.pad_depth(q)`).
 - 그립 힘: forcerange를 패드 한쪽당 약 40 N(RG2 최대치)이 나오도록 맞췄습니다.
 
 ## 모델링 메모

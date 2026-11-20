@@ -58,8 +58,8 @@
     <mesh file="wrist2_2.obj"/>
     <mesh file="wrist3.obj"/>
     <model name="gripper_rg2" file="../onrobot_rg2/rg2.xml"/>
-    <mesh name="wrist_cam_mount" file="../../wrist_cam_mount/assets/wrist_cam_mount.stl"/>
-    <mesh name="wrist_cam_cradle_col" file="../../wrist_cam_mount/assets/wrist_cam_cradle_col.stl"/>
+    <mesh name="wrist_cam_mount" file="../../wrist_cam_mount/assets/wrist_cam_mount_v2.stl"/>
+    <mesh name="wrist_cam_mount_col" file="../../wrist_cam_mount/assets/wrist_cam_mount_v2_col.stl"/>
     <material name="mount_pla" rgba="0.15 0.15 0.17 1" specular="0.1"/>
     <material name="d405_alu" rgba="0.55 0.56 0.58 1" specular="0.5" shininess="0.5"/>
     <material name="d405_glass" rgba="0.02 0.02 0.03 1" specular="0.8" shininess="0.9"/>
@@ -118,26 +118,30 @@
                   <geom material="linkgray" mesh="wrist3" class="visual"/>
                   <geom class="eef_collision" pos="0 0.08 0" quat="1 1 0 0" size="0.04 0.02"/>
                   <site name="attachment_site" pos="0 0.1 0" quat="-1 1 0 0"/>
-                  <!-- RG2 TCP (fingertip pad centre when closed): 0.01 m mount plate + 0.226 m from the tool flange -->
-                  <body name="end_effector_target" pos="0 0.3361 0">
+                  <!-- RG2 TCP (fingertip pad centre when closed): quick-changer rim 4.5 mm + 0.2261 m from the tool flange -->
+                  <body name="end_effector_target" pos="0 0.3306 0">
                     <geom type="box" size="0.001 0.001 0.001" rgba="1 0 0 1" contype="0" conaffinity="0"/>
                   </body>
                   <body name="attachment" pos="0 0.1 0" quat="-1 1 0 0">
-                    <!-- wrist camera mount (adapter plate 10 mm + arm), frame = UR tool flange -->
-                    <inertial pos="0.0277 0.0485 0.0039" mass="0.08" diaginertia="1e-4 1e-4 1e-4"/>
+                    <!-- wrist camera mount v2 (wrist_cam_mount/print/wrist_cam_mount_v2_mm.stl), frame = UR tool flange.
+                         7 mm plate (printed flange-face down) lands on the quick changer's bolt bosses 2.5 mm inside its centring recess -> changer rim at +4.5 mm -->
+                    <inertial pos="0.00032 -0.03882 0.02538" mass="0.04" diaginertia="4e-5 4e-5 4e-5"/>
                     <geom name="wrist_cam_mount" type="mesh" mesh="wrist_cam_mount" material="mount_pla"
                           contype="0" conaffinity="0" group="2" density="0"/>
-                    <geom name="wrist_cam_mount_col" type="mesh" mesh="wrist_cam_cradle_col" group="3" density="0"/>
-                    <!-- Intel RealSense D405 (42x42x23 mm) in the cradle, tilted 31.6 deg towards the tool axis -->
-                    <body name="wrist_cam" pos="0.07901 0.08963 0.01419" xyaxes="-0.75179 0.65006 -0.11060 0.51715 0.68531 0.51274">
+                    <geom name="wrist_cam_mount_col" type="mesh" mesh="wrist_cam_mount_col" group="3" density="0"/>
+                    <!-- Intel RealSense D405 (42x42x23 mm), front side (flange -y, away from the robot base at home): 65 mm off-axis, lens 80 mm down the tool axis, tilted 10 deg -->
+                    <body name="wrist_cam" pos="0.00000 -0.06708 0.06818" xyaxes="1.00000 0.00000 0.00000 0.00000 -0.98481 0.17365">
                       <inertial pos="0 0 0" mass="0.06" diaginertia="2e-5 2e-5 2e-5"/>
                       <geom type="box" size="0.02100 0.02100 0.01150" material="d405_alu" contype="0" conaffinity="0" group="2"/>
                       <geom type="box" size="0.017 0.006 0.0005" pos="0 0 -0.0115" material="d405_glass" contype="0" conaffinity="0" group="2"/>
                     </body>
-                    <!-- camera looks along -z (= lens direction); image up = towards the tool axis.
+                    <!-- camera looks along -z (= lens direction); image up = away from the tool axis = towards the workspace in front (fingers at the bottom, DROID-style).
                          fovy 58 deg = D405 vertical FOV; render at 16:10 (e.g. 640x400) for its 87 deg horizontal FOV -->
-                    <camera name="wrist_cam" pos="0.07410 0.08569 0.02441" xyaxes="0.75179 -0.65006 0.11060 -0.51715 -0.68531 -0.51274" fovy="58"/>
-                    <body name="gripper_frame" pos="0 0 0.01" quat="0.70710678 0 0 -0.70710678">
+                    <camera name="wrist_cam" pos="0.00000 -0.06500 0.08000" xyaxes="1.00000 0.00000 0.00000 0.00000 -0.98481 0.17365" fovy="58"/>
+                    <!-- gripper yaw on the flange: quat below = changer dowel pin aligned with the UR pin (release tab on flange -y).
+                         Without a dowel the changer can sit in any 90 deg step: +180 deg -> quat="0.70710678 0 0 0.70710678",
+                         +90 deg -> quat="1 0 0 0", -90 deg -> quat="0 0 0 1" -->
+                    <body name="gripper_frame" pos="0 0 0.0045" quat="0.70710678 0 0 -0.70710678">
                       <attach model="gripper_rg2" body="base_mount" prefix="rg2_"/>
                     </body>
                   </body>
